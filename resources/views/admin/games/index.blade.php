@@ -31,6 +31,7 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Titolo</th>
                                 <th scope="col">Slug</th>
+                                <th scope="col">Categoria</th>
                                 <th scope="col">Azioni</th>
 
                             </tr>
@@ -46,6 +47,13 @@
                                         <td>{{$game->id}}</td>
                                         <td>{{$game->title}}</td>
                                         <td>{{$game->slug}}</td>
+                                        <td>
+                                            @if ($game->category)
+                                            {{$game->category->name}}                                        
+                                            @else
+                                            Nessuna
+                                            @endif                          
+                                        </td>
 
                                         {{-- azioni --}}
                                         <td>

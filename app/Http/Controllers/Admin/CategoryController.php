@@ -28,7 +28,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.categories.create');
     }
 
     /**
@@ -39,7 +39,37 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // validazione dei dati
+        $request->validate([
+            'name' => 'required|string|max:120',
+        ]);
+
+        // creazione della categoria
+        $data = $request->all();
+
+        //nuova istanza
+        $newCategory = new Category();
+
+        //dati istanza
+        $newCategory->name = $data['name'];
+
+        //variabili per lo slug
+        $slug = Str::of($newCategory->name)->slug("-");
+        $count = 1;
+        
+        //ciclo slug
+        while( Category::where('slug', $slug)->first() ) {
+            $slug = Str::of($newCategory->name)->slug("-") . "-$count";
+            $count++;
+        }
+               
+        $newCategory->slug = $slug;
+
+        //save
+        $newCategory->save();
+
+        // redirect all'index
+        return redirect()->route('categories.index');
     }
 
     /**

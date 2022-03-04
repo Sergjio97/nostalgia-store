@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Game;
+use App\Category;
 
 class GameController extends Controller
 {
@@ -28,7 +29,8 @@ class GameController extends Controller
      */
     public function create()
     {
-        return view('admin.games.create');
+        $categories = Category::all();
+        return view('admin.games.create', compact('categories'));
     }
 
     /**
@@ -42,12 +44,13 @@ class GameController extends Controller
 
         // validazione dei dati
         $request->validate([
-            'title' => 'required|string|max:100',
+            'title' => 'required|string|max:120',
             'content' => 'required',
-            'published' => 'sometimes|accepted'
+            'published' => 'sometimes|accepted',
+            'category_id' => 'nullable|exists:categories,id'
         ]);
 
-        // creazione del post
+        // creazione del gioco
         $data = $request->all();
 
         //nuova istanza
@@ -71,8 +74,11 @@ class GameController extends Controller
             $slug = Str::of($newGame->title)->slug("-") . "-$count";
             $count++;
         }
-
+       
         $newGame->slug = $slug;
+
+        //foreign
+        $newGame->category_id = $data['category_id'];
 
         //save
         $newGame->save();
